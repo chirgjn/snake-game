@@ -1,0 +1,23 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.board {
+  width: 500px;
+  height: 500px;
+  background: black;
+  position: relative;
+}
+
+.snakebody {
+  width: 10px;
+  height: 10px;
+  background: white;
+  position: absolute;
+  border: solid 1px black;
+  box-sizing: border-box;
+}
+.snakebody:first-of-type {
+  background: red;
+}
