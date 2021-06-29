@@ -76,12 +76,20 @@ export default function App() {
           min="250"
           step="50"
           defaultValue={speed}
-          onChange={(e) => setSpeed(Number.parseInt(e.target.value, 10))}
+          onChange={(e) => {
+            const speed = Number.parseInt(e.target.value, 10);
+            if (Number.isNaN(speed)) {
+              setSpeed(null);
+            } else {
+              setSpeed(speed);
+            }
+          }}
         />
       </div>
     </>
   );
 }
+
 export function Board({ snakeSpeed }) {
   const [direction, setDirection] = React.useState("right");
   const directionRef = React.useRef(null);
@@ -90,22 +98,20 @@ export function Board({ snakeSpeed }) {
     { top: 3, left: 4 },
     { top: 3, left: 3 }
   ]);
+
   const gameLoop = React.useCallback(() => {
-    setDirection((d) => {
-      const invalidMap = {
-        right: "left",
-        left: "right",
-        up: "down",
-        down: "up"
-      };
-      if (
-        directionRef.current !== null &&
-        invalidMap[d] !== directionRef.current
-      ) {
-        return directionRef.current;
-      }
-      return d;
-    });
+    const invalidMap = {
+      right: "left",
+      left: "right",
+      up: "down",
+      down: "up"
+    };
+    const { current: newDirection } = directionRef;
+    if (newDirection !== null && invalidMap[direction] !== newDirection) {
+      setDirection(newDirection);
+    } else {
+      directionRef.current = null;
+    }
     updateSnakeParts((parts) => moveSnake(parts, direction));
   }, [direction]);
 
