@@ -22,6 +22,7 @@ function moveSnake(parts, direction) {
   const [{ ...newHead }] = tail;
 
   // last tail position is now vacant
+  // because the has body shifted by a block
   tail.pop();
 
   switch (direction) {
@@ -64,11 +65,34 @@ function getCurrentStatus(snakeParts, boardDimensions) {
   return { status: "running" };
 }
 
+function updateDirection(setDirection, direction, newDirection) {
+  const invalidMap = {
+    right: "left",
+    left: "right",
+    up: "down",
+    down: "up"
+  };
+  if (newDirection !== null && invalidMap[direction] !== newDirection) {
+    setDirection(newDirection);
+  }
+}
+function updateSnake(updateSnakeParts, direction) {
+  updateSnakeParts((parts) => moveSnake(parts, direction));
+}
+
 export default function App() {
   const [speed, setSpeed] = React.useState(250);
+  const initialState = {
+    snake: [
+      { top: 3, left: 5 },
+      { top: 3, left: 4 },
+      { top: 3, left: 3 }
+    ],
+    direction: "right"
+  };
   return (
     <>
-      <Board snakeSpeed={speed} />
+      <Board speed={speed} initialState={initialState} />
       <div>
         <span>Speed:</span>
         <input
@@ -90,32 +114,17 @@ export default function App() {
   );
 }
 
-export function Board({ snakeSpeed }) {
-  const [direction, setDirection] = React.useState("right");
+export function Board({ speed, initialState }) {
+  const [direction, setDirection] = React.useState(initialState.direction);
+  const [snakeParts, updateSnakeParts] = React.useState(initialState.snake);
   const directionRef = React.useRef(null);
-  const [snakeParts, updateSnakeParts] = React.useState([
-    { top: 3, left: 5 },
-    { top: 3, left: 4 },
-    { top: 3, left: 3 }
-  ]);
 
-  const gameLoop = React.useCallback(() => {
-    const invalidMap = {
-      right: "left",
-      left: "right",
-      up: "down",
-      down: "up"
-    };
-    const { current: newDirection } = directionRef;
-    if (newDirection !== null && invalidMap[direction] !== newDirection) {
-      setDirection(newDirection);
-    } else {
-      directionRef.current = null;
-    }
-    updateSnakeParts((parts) => moveSnake(parts, direction));
-  }, [direction]);
-
-  useInterval(gameLoop, snakeSpeed);
+  // game loop
+  useInterval(() => {
+    updateDirection(setDirection, direction, directionRef.current);
+    directionRef.current = null;
+    updateSnake(updateSnakeParts, direction);
+  }, speed);
 
   return (
     <div
