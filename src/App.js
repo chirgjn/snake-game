@@ -91,7 +91,7 @@ export default function App() {
     direction: "right"
   };
   return (
-    <>
+    <div className="App">
       <Board speed={speed} initialState={initialState} />
       <div>
         <span>Speed:</span>
@@ -110,7 +110,7 @@ export default function App() {
           }}
         />
       </div>
-    </>
+    </div>
   );
 }
 
