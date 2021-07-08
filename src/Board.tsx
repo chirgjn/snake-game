@@ -4,7 +4,7 @@ import { toPx } from "./common/render-utils";
 export type BoardProps = {
   width: number;
   height: number;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export default function Board({ width, height, children }: BoardProps) {
@@ -14,7 +14,7 @@ export default function Board({ width, height, children }: BoardProps) {
       style={{ width: toPx(width), height: toPx(height) }}
       className="board"
     >
-      {children}
+      {children ?? null}
     </div>
   );
 }
